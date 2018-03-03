@@ -25,17 +25,24 @@ function ilog(message, loggable) {
 const app = new Vue({
     el: "#app",
     data: {
-        length: 50, // board size.
+        board_size: 100, // board size.
         current_state: null,
         next_state: null,
         intervalTimerId: null,
-        simulationSpeed: 200, // ms
-        initialisationDensity: 0.3,
+        simulationSpeed: 100, // ms
+        initFactor : 3,
+        canvas_length: 350 // px
     },
 
     watch: {
-        length: function(length) {
+        board_size: function(board_size) {
             this.initialiseState();
+            this.drawCurrentState();
+        },
+
+        canvas_length: function(board_size) {
+            this.initialiseState();
+            this.drawCurrentState();
         },
 
         current_state: function(state) {
@@ -44,13 +51,15 @@ const app = new Vue({
     },
 
     computed: {
-        canvas_length: function() {
-            return this.length * 6;
-        },
         point_width: function() {
-            return this.canvas_length / this.length;
+            return this.canvas_length / this.board_size;
+        },
+        sim_is_running: function(){
+            return this.intervalTimerId !== null ;
+        },
+        initialisationDensity: function(){
+            return this.initFactor / 10;
         }
-        , sim_is_running: function(){return this.intervalTimerId !== null ;}
     },
 
     created: function() {
@@ -74,7 +83,7 @@ const app = new Vue({
 
         initialiseState: function() {
             this.stopSimulation();
-            this.current_state = createArray(this.length, this.length);
+            this.current_state = createArray(this.board_size, this.board_size);
 
             // initialise current_state
             for (let i = 0; i < this.current_state.length; i++) {
@@ -237,7 +246,7 @@ const app = new Vue({
         // Then set temporary board as current state
         simulateGeneration: function() {
             // next_state needs to be a new object everytime in order for VueJs to recognise that current_state has changed. It probably requires a new reference.
-            this.next_state = createArray(this.length, this.length);
+            this.next_state = createArray(this.board_size, this.board_size);
 
             for (let x = 0; x < this.current_state.length; x++) {
                 for (let y = 0; y < this.current_state[x].length; y++) {

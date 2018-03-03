@@ -18,64 +18,105 @@
 
 <body>
     <!--[if lte IE 9]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
     <!-- Core html below here -->
     <div id="header" class="basic-header" style="margin-bottom:1em;">
         <h1>Conway's Game of Life</h1>
         <h2>Vue.js Experiment</h2>
     </div>
-    <div id="app" class="container">
-        
-        <div class="card" v-cloak>
-            <div class="card-title basic-header">
 
-                <div class="row">
-                    <div class="col">
-                        <h3>Game board</h3>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <button class="btn btn-primary" v-if="sim_is_running" v-on:click="stopSimulation()">Stop simulation</button>
-                        <button class="btn btn-primary" v-else v-on:click="startSimulation()">Start Simulation</button>
-                        <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="simulateGeneration()">Run Single Generation</button>
-                        <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="initialiseState()">Reset Board</button>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body ">
-                <div>
-                    <div class="row">
-                        <div class="col">
-                            <h4>Dimensions: {{length}} by {{length}}</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <canvas id="stateCanvas" v-bind:width="canvas_length" v-bind:height="canvas_length" style="border:1px solid #000000;"></canvas>
-                        </div>
-                        <div class="col">
-                            <p>This is a simple implementation of
-                                <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's game of Life</a>.</p>
-                            <p>The basic technologies used were:
-                                <ul>
-                                    <li>
-                                        <a href="https://html5boilerplate.com">HTML5BoilerPlate</a> for the site template.</li>
-                                    <li>
-                                        <a href="https://getbootstrap.com">Bootstrap</a> for most of the styling.</li>
-                                    <li>
-                                        <a href="https://vuejs.org/">Vue.js</a> to manage to UI components and run the simulation. This may not the best
-                                        tool but it served as nice way to get to know some of the basic features of the framework.
-                                    </li>
-                                </ul>
+    <div class="container">
+        <div class="row seperator-row">
+            <div class="col">
+                <div id="app">
 
-                            </p>
+                    <div class="card" v-cloak>
+                        <div class="card-title basic-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>Game board</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-primary" v-if="sim_is_running" v-on:click="stopSimulation()">Stop simulation</button>
+                                    <button class="btn btn-primary" v-else v-on:click="startSimulation()">Start Simulation</button>
+                                    <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="simulateGeneration()">Run Single Generation</button>
+                                    <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="initialiseState()">Reset Board</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h4>Dimensions: {{board_size}} by {{board_size}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <canvas id="stateCanvas" v-bind:width="canvas_length" v-bind:height="canvas_length" style="border:1px solid #000000;"></canvas>
+                                </div>
+                                <div class="col">
+                                    <form>
+                                        <div class="form-group">
+                                            <fieldset :disabled="sim_is_running">
+                                                <!-- TODO: looks at creating a slider_controller componenets so which can be setup for bind attributes,label, min and max values etc -->
+                                                <label for="simulationSpeedController" class="form-control-label">Generation Length: {{simulationSpeed}} ms</label>
+                                                <input id="simulationSpeedController" type="range" min=50 max=500 v-model="simulationSpeed" class="form-control"
+                                                />
+                                                <label for="initialisationDensityController" class="form-control-label">Initial Population Density: {{initialisationDensity}} </label>
+                                                <input id="initialisationDensityController" type="range" min=1 max=9 v-model="initFactor" class="form-control" v-on:change="initialiseState()" 
+                                                />
+                                            </fieldset>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row seperator-row">
+            <div class="col">
+                <div class="card ">
+                    <div class="card-title basic-header">
+
+                        <div class="row">
+                            <div class="col">
+                                <h3>About</h3>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <p>This is a simple implementation of
+                                    <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's game of Life</a>.
+                                </p>
+                                <p>The basic technologies used were:
+                                    <ul>
+                                        <li>
+                                            <a href="https://html5boilerplate.com">HTML5BoilerPlate</a> for the site template.</li>
+                                        <li>
+                                            <a href="https://getbootstrap.com">Bootstrap</a> for most of the styling.</li>
+                                        <li>
+                                            <a href="https://vuejs.org/">Vue.js</a> to manage to UI components and run the simulation. This may not the
+                                            best tool but it served as nice way to get to know some of the basic features
+                                            of the framework.
+                                        </li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
