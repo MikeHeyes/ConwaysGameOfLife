@@ -4,11 +4,11 @@
     Source: https://stackoverflow.com/a/966938
 */
 function createArray(length) {
-    var arr = new Array(length || 0),
+    let arr = new Array(length || 0),
         i = length;
 
     if (arguments.length > 1) {
-        var args = Array.prototype.slice.call(arguments, 1);
+        let args = Array.prototype.slice.call(arguments, 1);
         while (i--) arr[length - 1 - i] = createArray.apply(this, args);
     }
 
@@ -77,8 +77,8 @@ const app = new Vue({
             this.current_state = createArray(this.length, this.length);
 
             // initialise current_state
-            for (var i = 0; i < this.current_state.length; i++) {
-                for (var j = 0; j < this.current_state[i].length; j++) {
+            for (let i = 0; i < this.current_state.length; i++) {
+                for (let j = 0; j < this.current_state[i].length; j++) {
                     // if random number less than 0.5, set to 0 else 1
                     this.current_state[i][j] = Math.random() > this.initialisationDensity ? 0 : 1;
                 }
@@ -86,7 +86,7 @@ const app = new Vue({
         },
 
         setStateValue(xpos, ypos, value) {
-            var temp_row = this.current_state[xpos];
+            let temp_row = this.current_state[xpos];
             temp_row[ypos] = value;
             console.log("(" + xpos + ", " + ypos + ")");
             Vue.set(app.current_state, xpos, temp_row);
@@ -95,15 +95,15 @@ const app = new Vue({
 
         drawCurrentState: function() {
             // getting the canvas and context may be expensive. Try having this as global if it becomes problem
-            var canvas = $("#stateCanvas").get(0);
-            var ctx = canvas.getContext("2d");
+            let canvas = $("#stateCanvas").get(0);
+            let ctx = canvas.getContext("2d");
 
-            for (var x = 0; x < this.current_state.length; x++) {
-                for (var y = 0; y < this.current_state[x].length; y++) {
+            for (let x = 0; x < this.current_state.length; x++) {
+                for (let y = 0; y < this.current_state[x].length; y++) {
                     // if random number less than 0.5, set to 0 else 1
                     // flip y position when drawing to it looks the right way up on when drawn.
-                    var yposTranslated = this.current_state[x].length - 1 - y;
-                    var colour = this.current_state[x][y] == 0 ? "lightgray" : "red";
+                    let yposTranslated = this.current_state[x].length - 1 - y;
+                    let colour = this.current_state[x][y] == 0 ? "lightgray" : "red";
                     ctx.beginPath();
                     // upper-left-xcoord, upper-left-ycoord, width, height
                     ctx.rect(
@@ -132,9 +132,9 @@ const app = new Vue({
                         column_obj.excludeYpos,
                     loggable
                 );
-                var count = 0;
-                for (var i = -1; i <= 1; i++) {
-                    var yCheck = null;
+                let count = 0;
+                for (let i = -1; i <= 1; i++) {
+                    let yCheck = null;
                     // On the column, we know the ypos, and we know we need to check ypos -1, +0, and +1 to get the neighbouring cells
                     // make sure that modified ypos is inside the column array before setting the check index
                     if (ypos + i >= 0 && ypos + i < column_obj.col.length) {
@@ -155,8 +155,8 @@ const app = new Vue({
 
             ilog("Params: xpos= " + xpos + ", ypos= " + ypos, loggable);
 
-            var neighbours = 0;
-            var test_cols = [];
+            let neighbours = 0;
+            let test_cols = [];
             test_cols.push({
                 col: this.current_state[xpos],
                 excludeYpos: true,
@@ -193,7 +193,7 @@ const app = new Vue({
             }
 
             // every column we want to check, count cell neighbours
-            for (var i = 0; i < test_cols.length; i++) {
+            for (let i = 0; i < test_cols.length; i++) {
                 neighbours = neighbours + getColCount(test_cols[i], ypos);
             }
 
@@ -212,7 +212,7 @@ const app = new Vue({
             //  4.  Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
             neighbours = this.countNeighbours(x, y);
-            var return_value = 0;
+            let return_value = 0;
             // Rules 1-3 (for alive cells)
             if (this.current_state[x][y] == 1) {
                 if (neighbours < 2 || neighbours > 3) {
@@ -239,8 +239,8 @@ const app = new Vue({
             // next_state needs to be a new object everytime in order for VueJs to recognise that current_state has changed. It probably requires a new reference.
             this.next_state = createArray(this.length, this.length);
 
-            for (var x = 0; x < this.current_state.length; x++) {
-                for (var y = 0; y < this.current_state[x].length; y++) {
+            for (let x = 0; x < this.current_state.length; x++) {
+                for (let y = 0; y < this.current_state[x].length; y++) {
                     this.next_state[x][y] = this.applyRulesToCell(x, y);
                 }
             }
