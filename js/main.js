@@ -125,7 +125,7 @@ const app = new Vue({
         for (let j = 0; j < this.current_state[i].length; j++) {
           // if random number less than 0.5, set to 0 else 1
           this.current_state[i][j] =
-            Math.random() > this.initialisationDensity ? 0 : 1;
+            Math.random() > this.initialisationDensity ? false : true;
         }
       }
     },
@@ -148,7 +148,7 @@ const app = new Vue({
           // if random number less than 0.5, set to 0 else 1
           // flip y position when drawing to it looks the right way up on when drawn.
           let yposTranslated = this.current_state[x].length - 1 - y;
-          let colour = this.current_state[x][y] == 0 ? "lightgray" : "red";
+          let colour = this.current_state[x][y] ? "red" : "lightgray";
           ctx.beginPath();
           // upper-left-xcoord, upper-left-ycoord, width, height
           ctx.rect(
@@ -194,7 +194,7 @@ const app = new Vue({
             (i != 0 || (i == 0 && !column_obj.excludeYpos)) &&
             yCheck !== null
           ) {
-            count = count + column_obj.col[yCheck];
+            count = count + (column_obj.col[yCheck] ? 1 : 0);
           }
         }
         return count;
@@ -264,18 +264,18 @@ const app = new Vue({
       neighbours = this.countNeighbours(x, y);
       let return_value = 0;
       // Rules 1-3 (for alive cells)
-      if (this.current_state[x][y] == 1) {
+      if (this.current_state[x][y]) {
         if (neighbours < 2 || neighbours > 3) {
-          return_value = 0;
+          return_value = false;
         } else {
-          return_value = 1;
+          return_value = true;
         }
         // Rule 4 (not alive, so dead)
       } else {
         if (neighbours == 3) {
-          return_value = 1;
+          return_value = true;
         } else {
-          return_value = 0;
+          return_value = false;
         }
       }
 
