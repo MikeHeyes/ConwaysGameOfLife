@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang>
 
 <head>
     <meta charset="utf-8">
@@ -8,12 +8,11 @@
     <meta name="description" content="Small 'get to know' VueJS project">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="manifest" href="site.webmanifest">
+    <link href="site.webmanifest" rel="manifest">
     <!-- Bootstrap4 css -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-        crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom css with Html5BoilerPlate classes-->
-    <link rel="stylesheet" href="css/main.css">
+    <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -21,7 +20,7 @@
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
     <!-- Core html below here -->
-    <div id="header" class="basic-header" style="margin-bottom:1em;">
+    <div class="basic-header" id="header" style="margin-bottom:1em;">
         <h1>Conway's Game of Life</h1>
         <h2>Vue.js Experiment</h2>
     </div>
@@ -50,28 +49,23 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <h4>Dimensions: {{board_size}} by {{board_size}}</h4>
+                                    <h4>Dimensions: {{board_size}} by {{board_size}} | Generation : {{generation}}</h4> 
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col">
+                                <div class="col-5">
                                     <canvas id="stateCanvas" v-bind:width="canvas_length" v-bind:height="canvas_length" style="border:1px solid #000000;"></canvas>
                                 </div>
-                                <div class="col">
+                                <div class="col-7">
                                     <form>
                                         <div class="form-group">
                                             <fieldset :disabled="sim_is_running">
-                                                <!-- TODO: looks at creating a slider_controller componenets so which can be setup for bind attributes,label, min and max values etc -->
-                                                <label for="simulationSpeedController" class="form-control-label">Generation Length: {{simulationSpeed}} ms</label>
-                                                <input id="simulationSpeedController" type="range" min=50 max=500 v-model="simulationSpeed" class="form-control"
-                                                />
-                                                <label for="initialisationDensityController" class="form-control-label">Initial Population Density: {{initialisationDensity}} </label>
-                                                <input id="initialisationDensityController" type="range" min=1 max=9 v-model="initFactor" class="form-control" v-on:change="initialiseState()" 
-                                                />
+                                                <range-input input-id="simulationSpeedController" prompt="Generation Length" prompt-units="ms" :display-value="simulationSpeed" :initial-value="simulationSpeed" :min-value="10" :max-value="500" v-on:value-change="updateSimulationSpeed"></range-input>
+                                                <range-input input-id="initialisationDensityController" prompt="Initial Population Density" :display-value="initialisationDensity" :initial-value="initFactor" :min-value="1" :max-value="9" v-on:value-change="updateIntialisationDensity"></range-input>
                                             </fieldset>
                                         </div>
                                     </form>
-                                </div>
+                                </div>  
                             </div>
                         </div>
                     </div>
@@ -88,9 +82,7 @@
                                 <h3>About</h3>
                             </div>
                         </div>
-
                     </div>
-
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
@@ -123,12 +115,9 @@
 
     <!-- Core html above here -->
     <!-- Bootstrap 4 required javascript -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- VueJs  -->
     <script src="https://unpkg.com/vue"></script>
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
