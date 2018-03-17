@@ -2,127 +2,129 @@
 <html class="no-js" lang>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Conway's Game of Life</title>
-    <meta name="description" content="Small 'get to know' VueJS project">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="site.webmanifest" rel="manifest">
-    <!-- Bootstrap4 css -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- Custom css with Html5BoilerPlate classes-->
-    <link href="css/main.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Conway's Game of Life</title>
+  <meta name="description" content="Small 'get to know' VueJS project">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="site.webmanifest" rel="manifest">
+  <!-- Bootstrap4 css -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <!-- Custom css with Html5BoilerPlate classes-->
+  <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
-    <!--[if lte IE 9]>
-        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-        <![endif]-->
+  <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
     <!-- Core html below here -->
     <div class="basic-header" id="header" style="margin-bottom:1em;">
-        <h1>Conway's Game of Life</h1>
-        <h2>Vue.js Experiment</h2>
+      <h1>Conway's Game of Life</h1>
+      <h2>Vue.js Experiment</h2>
     </div>
-
+    
     <div class="container">
-        <div class="row seperator-row">
-            <div class="col">
-                <div id="app">
-
-                    <div class="card" v-cloak>
-                        <div class="card-title basic-header">
-                            <div class="row">
-                                <div class="col">
-                                    <h3>Game board</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <button class="btn btn-primary" v-if="sim_is_running" v-on:click="stopSimulation()">Stop simulation</button>
-                                    <button class="btn btn-primary" v-else v-on:click="startSimulation()">Start Simulation</button>
-                                    <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="simulateGeneration()">Run Single Generation</button>
-                                    <button class="btn btn-secondary" v-if="!sim_is_running" v-on:click="initialiseState()">Reset Board</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <h4>Dimensions: {{board_size}} by {{board_size}} | Generation : {{generation}}</h4> 
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-5">
-                                    <canvas id="stateCanvas" v-bind:width="canvas_length" v-bind:height="canvas_length" style="border:1px solid #000000;"></canvas>
-                                </div>
-                                <div class="col-7">
-                                    <form>
-                                        <div class="form-group">
-                                            <fieldset :disabled="sim_is_running">
-                                                <range-input input-id="simulationSpeedController" prompt="Generation Length" prompt-units="ms" :display-value="simulationSpeed" :initial-value="simulationSpeed" :min-value="10" :max-value="500" v-on:value-change="updateSimulationSpeed"></range-input>
-                                                <range-input input-id="initialisationDensityController" prompt="Initial Population Density" :display-value="initialisationDensity" :initial-value="initFactor" :min-value="1" :max-value="9" v-on:value-change="updateIntialisationDensity"></range-input>
-                                            </fieldset>
-                                        </div>
-                                    </form>
-                                </div>  
-                            </div>
-                        </div>
-                    </div>
+      <div class="row seperator-row">
+        <div class="col">
+          <div id="app">
+            
+            <div class="card" v-cloak>
+              <div class="card-title basic-header">
+                <div class="row">
+                  <div class="col">
+                    <h3>Game board</h3>
+                  </div>
                 </div>
-            </div>
-        </div>
-        <div class="row seperator-row">
-            <div class="col">
-                <div class="card ">
-                    <div class="card-title basic-header">
-
-                        <div class="row">
-                            <div class="col">
-                                <h3>About</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                <p>This is a simple implementation of
-                                    <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's game of Life</a>.
-                                </p>
-                                <p>The basic technologies used were:
-                                    <ul>
-                                        <li>
-                                            <a href="https://html5boilerplate.com">HTML5BoilerPlate</a> for the site template.</li>
-                                        <li>
-                                            <a href="https://getbootstrap.com">Bootstrap</a> for most of the styling.</li>
-                                        <li>
-                                            <a href="https://vuejs.org/">Vue.js</a> to manage to UI components and run the simulation. This may not the
-                                            best tool but it served as nice way to get to know some of the basic features
-                                            of the framework.
-                                        </li>
-                                    </ul>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row">
+                  <div class="col">
+                    <button class="btn btn-primary" v-if="simIsRunning" v-on:click="stopSimulation()">Stop simulation</button>
+                    <button class="btn btn-primary" v-else v-on:click="startSimulation()">Start Simulation</button>
+                    <button class="btn btn-secondary" v-if="!simIsRunning" v-on:click="simulateGeneration()">Run Single Generation</button>
+                    <button class="btn btn-secondary" v-if="!simIsRunning" v-on:click="initialiseState()">Reset Board</button>
+                  </div>
                 </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h4>Dimensions: {{boardSize}} by {{boardSize}} | Generation : {{generation}}</h4> 
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-5">
+                    <canvas id="stateCanvas" v-bind:width="canvasLength" v-bind:height="canvasLength" style="border:1px solid #000000;"></canvas>
+                  </div>
+                  <div class="col-7">
+                    <form>
+                      <div class="form-group">
+                        <fieldset :disabled="simIsRunning">
+                          <range-input input-id="simulationSpeedController" prompt="Generation Length" prompt-units="ms" :display-value="simulationSpeed" :initial-value="simulationSpeed" :min-value="10" :max-value="500" v-on:value-change="updateSimulationSpeed"></range-input>
+                          <range-input input-id="initialisationDensityController" prompt="Initial Population Density" :display-value="initialisationDensity" :initial-value="initFactor" :min-value="1" :max-value="9" v-on:value-change="updateIntialisationDensity"></range-input>
+                        </fieldset>
+                      </div>
+                    </form>
+                  </div>  
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-
-    </div>
-
-
-
-    <!-- Core html above here -->
-    <!-- Bootstrap 4 required javascript -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <!-- VueJs  -->
-    <script src="https://unpkg.com/vue"></script>
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
-    <!-- Core application js here -->
-    <script src="js/main.js"></script>
-</body>
-
-</html>
+      </div>
+      <div class="row seperator-row">
+        <div class="col">
+          <div class="card ">
+            <div class="card-title basic-header">
+              
+              <div class="row">
+                <div class="col">
+                  <h3>About</h3>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <p>This is a simple implementation of
+                    <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's game of Life</a>.
+                  </p>
+                  <p>The basic technologies used were:
+                    <ul>
+                      <li>
+                        <a href="https://html5boilerplate.com">HTML5BoilerPlate</a> for the site template.</li>
+                        <li>
+                          <a href="https://getbootstrap.com">Bootstrap</a> for most of the styling.</li>
+                          <li>
+                            <a href="https://vuejs.org/">Vue.js</a> to manage to UI components and run the simulation. This may not the
+                            best tool but it served as nice way to get to know some of the basic features
+                            of the framework.
+                          </li>
+                        </ul>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        
+        
+        <!-- Core html above here -->
+        <!-- Bootstrap 4 required javascript -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- VueJs  -->
+        <script src="https://unpkg.com/vue"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-3.2.1.min.js"><\/script>')</script>
+        <!-- Core application js here -->
+        <script src="js/global_utils.js"></script>
+        <script src="js/global_components.js"></script>
+        <script src="js/main.js"></script>
+      </body>
+      
+      </html>

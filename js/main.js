@@ -1,70 +1,15 @@
-/*
-    Create an n-demensional array
-    @param length whne 2 is a 2d array
-    Source: https://stackoverflow.com/a/966938
-*/
-function createArray(length) {
-  let arr = new Array(length || 0),
-    i = length;
-
-  if (arguments.length > 1) {
-    let args = Array.prototype.slice.call(arguments, 1);
-    while (i--) arr[length - 1 - i] = createArray.apply(this, args);
-  }
-
-  return arr;
-}
-
-/** Only write t0 console when loggable param is true to preevent console log memory issue in browser */
-function ilog(message, loggable) {
-  if (loggable) {
-    console.log(message);
-  }
-}
-
-/**
- * Define a range-input component to simplify html and encapusulate code where possible
- */
-Vue.component("range-input", {
-  props: {
-    // Validating prop datatypes
-    inputId: [String, Number],
-    prompt: String,
-    promptUnits: String,
-    minValue: Number,
-    maxValue: Number,
-    displayValue: [String, Number],
-    initialValue: Number
-  },
-  template:
-    "<div>" +
-    '<label for="inputId" class="form-control-label">{{prompt}}: {{displayValue}} {{promptUnits}}</label>' +
-    '<input id="inputId" type="range" :min="minValue" :max="maxValue" v-model="value" class="form-control" v-on:change="publishValueChange"/>' +
-    "</div>",
-  methods: {
-    publishValueChange: function() {
-      this.$emit("value-change", { value: Number(this.value) });
-    }
-  },
-  data: function() {
-    return {
-      value: this.initialValue
-    };
-  }
-});
-
 const app = new Vue({
   el: "#app",
-
   data: {
-    board_size: 100, // board size.
-    current_state: null,
-    next_state: null,
+    boardSize: 80, // board size.
+    currentState: null,
+    nextState: null,
     intervalTimerId: null,
     simulationSpeed: 100, // ms
     initFactor: 3,
-    canvas_length: 350, // px
+    canvasLength: 350, // px
     generation: 0
+    
   },
 
   created: function() {
@@ -72,27 +17,27 @@ const app = new Vue({
   },
 
   watch: {
-    board_size: function(board_size) {
+    boardSize: function(boardSize) {
       this.initialiseState();
       this.drawCurrentState();
     },
 
-    canvas_length: function(board_size) {
+    canvasLength: function(boardSize) {
       this.initialiseState();
       this.drawCurrentState();
     },
 
-    current_state: function(state) {
+    currentState: function(state) {
       this.drawCurrentState();
     }
   },
 
   computed: {
-    point_width: function() {
-      return this.canvas_length / this.board_size;
+    pointWidth: function() {
+      return this.canvasLength / this.boardSize;
     },
 
-    sim_is_running: function() {
+    simIsRunning: function() {
       return this.intervalTimerId !== null;
     },
 
@@ -118,23 +63,23 @@ const app = new Vue({
 
     initialiseState: function() {
       this.stopSimulation();
-      this.current_state = createArray(this.board_size, this.board_size);
+      this.currentState = createArray(this.boardSize, this.boardSize);
       this.generation = 0;
-      // initialise current_state
-      for (let i = 0; i < this.current_state.length; i++) {
-        for (let j = 0; j < this.current_state[i].length; j++) {
+      // initialise currentState
+      for (let i = 0; i < this.currentState.length; i++) {
+        for (let j = 0; j < this.currentState[i].length; j++) {
           // if random number less than 0.5, set to 0 else 1
-          this.current_state[i][j] =
+          this.currentState[i][j] =
             Math.random() > this.initialisationDensity ? false : true;
         }
       }
     },
 
     setStateValue(xpos, ypos, value) {
-      let temp_row = this.current_state[xpos];
+      let temp_row = this.currentState[xpos];
       temp_row[ypos] = value;
       console.log("(" + xpos + ", " + ypos + ")");
-      Vue.set(app.current_state, xpos, temp_row);
+      Vue.set(app.currentState, xpos, temp_row);
       this.drawCurrentState();
     },
 
@@ -143,19 +88,19 @@ const app = new Vue({
       let canvas = $("#stateCanvas").get(0);
       let ctx = canvas.getContext("2d");
 
-      for (let x = 0; x < this.current_state.length; x++) {
-        for (let y = 0; y < this.current_state[x].length; y++) {
+      for (let x = 0; x < this.currentState.length; x++) {
+        for (let y = 0; y < this.currentState[x].length; y++) {
           // if random number less than 0.5, set to 0 else 1
           // flip y position when drawing to it looks the right way up on when drawn.
-          let yposTranslated = this.current_state[x].length - 1 - y;
-          let colour = this.current_state[x][y] ? "red" : "lightgray";
+          let yposTranslated = this.currentState[x].length - 1 - y;
+          let colour = this.currentState[x][y] ? "red" : "lightgray";
           ctx.beginPath();
           // upper-left-xcoord, upper-left-ycoord, width, height
           ctx.rect(
-            this.point_width * x,
-            this.point_width * yposTranslated,
-            this.point_width,
-            this.point_width
+            this.pointWidth * x,
+            this.pointWidth * yposTranslated,
+            this.pointWidth,
+            this.pointWidth
           );
           ctx.fillStyle = colour;
           ctx.fill();
@@ -203,48 +148,48 @@ const app = new Vue({
       ilog("Params: xpos= " + xpos + ", ypos= " + ypos, loggable);
 
       let neighbours = 0;
-      let test_cols = [];
-      test_cols.push({
-        col: this.current_state[xpos],
+      let testCols = [];
+      testCols.push({
+        col: this.currentState[xpos],
         excludeYpos: true,
         label: "center"
       });
-      if (xpos < 0 || xpos >= this.current_state.length) {
+      if (xpos < 0 || xpos >= this.currentState.length) {
         ilog(
           "Message: xpos outside of board. ignore for now: " + xpos,
           loggable
         );
-      } else if (xpos == this.current_state.length - 1) {
+      } else if (xpos == this.currentState.length - 1) {
         ilog("Message: Push left", loggable);
-        test_cols.push({
-          col: this.current_state[xpos - 1],
+        testCols.push({
+          col: this.currentState[xpos - 1],
           excludeYpos: false,
           label: "left"
         });
       } else if (xpos == 0) {
         ilog("Message: Push right", loggable);
-        test_cols.push({
-          col: this.current_state[xpos + 1],
+        testCols.push({
+          col: this.currentState[xpos + 1],
           excludeYpos: false,
           label: "right"
         });
       } else {
         ilog("Message: Push left and right", loggable);
-        test_cols.push({
-          col: this.current_state[xpos + 1],
+        testCols.push({
+          col: this.currentState[xpos + 1],
           excludeYpos: false,
           label: "right"
         });
-        test_cols.push({
-          col: this.current_state[xpos + -1],
+        testCols.push({
+          col: this.currentState[xpos + -1],
           excludeYpos: false,
           label: "left"
         });
       }
 
       // every column we want to check, count cell neighbours
-      for (let i = 0; i < test_cols.length; i++) {
-        neighbours = neighbours + getColCount(test_cols[i], ypos);
+      for (let i = 0; i < testCols.length; i++) {
+        neighbours = neighbours + getColCount(testCols[i], ypos);
       }
 
       return neighbours;
@@ -262,40 +207,40 @@ const app = new Vue({
       //  4.  Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
       neighbours = this.countNeighbours(x, y);
-      let return_value = 0;
+      let returnValue = 0;
       // Rules 1-3 (for alive cells)
-      if (this.current_state[x][y]) {
+      if (this.currentState[x][y]) {
         if (neighbours < 2 || neighbours > 3) {
-          return_value = false;
+          returnValue = false;
         } else {
-          return_value = true;
+          returnValue = true;
         }
         // Rule 4 (not alive, so dead)
       } else {
         if (neighbours == 3) {
-          return_value = true;
+          returnValue = true;
         } else {
-          return_value = false;
+          returnValue = false;
         }
       }
 
-      return return_value;
+      return returnValue;
     },
 
     // Function which does all the game rule processing.
-    // Process current_state applying the outcome of the rules to a temporary state board
+    // Process currentState applying the outcome of the rules to a temporary state board
     // Then set temporary board as current state
     simulateGeneration: function() {
-      // next_state needs to be a new object everytime in order for VueJs to recognise that current_state has changed. It probably requires a new reference.
-      this.next_state = createArray(this.board_size, this.board_size);
+      // nextState needs to be a new object everytime in order for VueJs to recognise that currentState has changed. It probably requires a new reference.
+      this.nextState = createArray(this.boardSize, this.boardSize);
 
-      for (let x = 0; x < this.current_state.length; x++) {
-        for (let y = 0; y < this.current_state[x].length; y++) {
-          this.next_state[x][y] = this.applyRulesToCell(x, y);
+      for (let x = 0; x < this.currentState.length; x++) {
+        for (let y = 0; y < this.currentState[x].length; y++) {
+          this.nextState[x][y] = this.applyRulesToCell(x, y);
         }
       }
 
-      this.current_state = this.next_state;
+      this.currentState = this.nextState;
       this.generation = this.generation + 1;
     },
 
