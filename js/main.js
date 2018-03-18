@@ -8,8 +8,8 @@ const app = new Vue({
     simulationSpeed: 100, // ms
     initFactor: 3,
     canvasLength: 350, // px
-    generation: 0
-    
+    generation: 0,
+    wrapBoard: true
   },
 
   created: function() {
@@ -111,85 +111,81 @@ const app = new Vue({
       }
     },
 
-    countNeighbours: function(xpos, ypos, loggable) {
-      function getColCount(column_obj, ypos) {
-        ilog(
-          "getColCount: label= " +
-            column_obj.label +
-            " ypos= " +
-            ypos +
-            " ExcludeYpos?= " +
-            column_obj.excludeYpos,
-          loggable
-        );
+    getColCount: function(column_obj, loggable) {
+      ilog(
+        "getColCount: label= " +
+          column_obj.label +
+          " ypos= " +
+          column_obj.ypos +
+          " ExcludeYpos?= " +
+          column_obj.excludeYpos,
+        loggable
+      );
 
-        let count = 0;
+      let count = 0;
 
-        for (let i = -1; i <= 1; i++) {
-          let yCheck = null;
-          // On the column, we know the ypos, and we know we need to check ypos -1, +0, and +1 to get the neighbouring cells
-          // make sure that modified ypos is inside the column array before setting the check index
-          if (ypos + i >= 0 && ypos + i < column_obj.col.length) {
-            yCheck = ypos + i;
-          }
-
-          // if check index has a value AND we are checking above or below ypos, add to neighbour count
-          // OR if check index has value AND we are checking ypos column and we have not been told to skip it (because we are checking cell column), add to neighbour count
-          if (
-            (i != 0 || (i == 0 && !column_obj.excludeYpos)) &&
-            yCheck !== null
-          ) {
-            count = count + (column_obj.col[yCheck] ? 1 : 0);
-          }
+      for (let i = -1; i <= 1; i++) {
+        let yCheck = null;
+        // On the column, we know the ypos, and we know we need to check ypos -1, +0, and +1 to get the neighbouring cells
+        // make sure that modified ypos is inside the column array before setting the check index
+        if (
+          (!this.wrapBoard &&
+            column_obj.ypos + i >= 0 &&
+            column_obj.ypos + i < column_obj.col.length) ||
+          this.wrapBoard
+        ) {
+          yCheck =
+            (column_obj.ypos + i + column_obj.col.length) %
+            column_obj.col.length;
         }
-        return count;
-      }
 
+        // if check index has a value AND we are checking above or below ypos, add to neighbour count
+        // OR if check index has value AND we are checking ypos column and we have not been told to skip it (because we are checking cell column), add to neighbour count
+        if (i != 0 || (i == 0 && !column_obj.excludeYpos)) {
+          count = count + (column_obj.col[yCheck] ? 1 : 0);
+        }
+      }
+      return count;
+    },
+
+    countNeighbours: function(xpos, ypos, loggable) {
       ilog("Params: xpos= " + xpos + ", ypos= " + ypos, loggable);
 
       let neighbours = 0;
       let testCols = [];
       testCols.push({
         col: this.currentState[xpos],
+        ypos: ypos,
         excludeYpos: true,
         label: "center"
       });
-      if (xpos < 0 || xpos >= this.currentState.length) {
-        ilog(
-          "Message: xpos outside of board. ignore for now: " + xpos,
-          loggable
-        );
-      } else if (xpos == this.currentState.length - 1) {
-        ilog("Message: Push left", loggable);
+      if ((!this.wrapBoard && xpos - 1 >= 0) || this.wrapBoard) {
         testCols.push({
-          col: this.currentState[xpos - 1],
+          col: this.currentState[
+            (xpos - 1 + this.currentState.length) % this.currentState.length
+          ],
           excludeYpos: false,
+          ypos: ypos,
           label: "left"
         });
-      } else if (xpos == 0) {
-        ilog("Message: Push right", loggable);
+      }
+      if (
+        (!this.wrapBoard && xpos + 1 < this.currentState.length) ||
+        this.wrapBoard
+      ) {
         testCols.push({
-          col: this.currentState[xpos + 1],
+          col: this.currentState[
+            (xpos + 1 + this.currentState.length) % this.currentState.length
+          ],
           excludeYpos: false,
+          ypos: ypos,
           label: "right"
-        });
-      } else {
-        ilog("Message: Push left and right", loggable);
-        testCols.push({
-          col: this.currentState[xpos + 1],
-          excludeYpos: false,
-          label: "right"
-        });
-        testCols.push({
-          col: this.currentState[xpos + -1],
-          excludeYpos: false,
-          label: "left"
         });
       }
 
       // every column we want to check, count cell neighbours
       for (let i = 0; i < testCols.length; i++) {
-        neighbours = neighbours + getColCount(testCols[i], ypos);
+        neighbours = neighbours + this.getColCount(testCols[i]);
       }
 
       return neighbours;
