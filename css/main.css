@@ -115,6 +115,13 @@ body {
 .seperator-row {
   margin-bottom: 1.5em;
 }
+
+label.prompt{
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 0.2em;
+  margin-bottom: 0em;
+}
 /* ==========================================================================
    Helper classes
    ========================================================================== */

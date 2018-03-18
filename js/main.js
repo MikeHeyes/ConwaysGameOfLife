@@ -1,7 +1,7 @@
 const app = new Vue({
   el: "#app",
   data: {
-    boardSize: 80, // board size.
+    boardSize:50, // Medium board size.
     currentState: null,
     nextState: null,
     intervalTimerId: null,

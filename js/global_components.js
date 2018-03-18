@@ -14,7 +14,7 @@ Vue.component("range-input", {
   },
   template:
     "<div>" +
-    '<label for="inputId" class="form-control-label">{{prompt}}: {{displayValue}} {{promptUnits}}</label>' +
+    '<label for="inputId" class="prompt">{{prompt}}: {{displayValue}} {{promptUnits}}</label>' +
     '<input id="inputId" type="range" :min="minValue" :max="maxValue" v-model="value" class="form-control" v-on:change="publishValueChange"/>' +
     "</div>",
   methods: {

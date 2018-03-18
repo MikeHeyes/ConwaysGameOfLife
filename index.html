@@ -37,14 +37,6 @@
                     <h3>Game board</h3>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <button class="btn btn-primary" v-if="simIsRunning" v-on:click="stopSimulation()">Stop simulation</button>
-                    <button class="btn btn-primary" v-else v-on:click="startSimulation()">Start Simulation</button>
-                    <button class="btn btn-secondary" v-if="!simIsRunning" v-on:click="simulateGeneration()">Run Single Generation</button>
-                    <button class="btn btn-secondary" v-if="!simIsRunning" v-on:click="initialiseState()">Reset Board</button>
-                  </div>
-                </div>
               </div>
               <div class="card-body">
                 <div class="row">
@@ -60,18 +52,53 @@
                     <form>
                       <div class="form-group">
                         <fieldset :disabled="simIsRunning">
+                          
+                          <div class="row">
+                            <div class="col-6">
+                              <label class="prompt" for="boardSizeRadioGroup">Board size</label>
+                              <div id="boardSizeRadioGroup">
+                                <div class="form-check">
+                                  <input class="form-check-input" id="smallSize" type="radio" :value="25" v-model="boardSize">
+                                  <label class="form-check-label" for="smallSize">Small (25x25)</label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" id="medSize" type="radio" :value="50" v-model="boardSize">
+                                  <label class="form-check-label" for="medSize">Medium (50x50)</label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" id="largeSize" type="radio" :value="75" v-model="boardSize">
+                                  <label class="form-check-label" for="largeSize">Large (75x75)</label>
+                                </div>
+                                <div class="form-check">
+                                  <input class="form-check-input" id="xLargeSize" type="radio" :value="100" v-model="boardSize">
+                                  <label class="form-check-label" for="xLargeSize">Extra-large (100x100)</label>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <label class="prompt" for="wrapBoardInput">Enable board wrapping?</label>
+                              <input id="wrapBoardInput" type="checkbox" :value="true" v-model="wrapBoard">
+                            </div>
+                          </div>
                           <range-input input-id="simulationSpeedController" prompt="Generation Length" prompt-units="ms" :display-value="simulationSpeed" :initial-value="simulationSpeed" :min-value="10" :max-value="500" v-on:value-change="updateSimulationSpeed"></range-input>
                           <range-input input-id="initialisationDensityController" prompt="Initial Population Density" :display-value="initialisationDensity" :initial-value="initFactor" :min-value="1" :max-value="9" v-on:value-change="updateIntialisationDensity"></range-input>
                         </fieldset>
-                      </div>
-                    </form>
+                        </div> 
+                        <div>
+                          <button class="btn btn-primary" type="button" v-if="simIsRunning" v-on:click="stopSimulation()">Stop simulation</button>
+                          <button class="btn btn-primary" type="button" v-else v-on:click="startSimulation()">Start Simulation</button>
+                          <button class="btn btn-secondary" type="button" v-if="!simIsRunning" v-on:click="simulateGeneration()">Run Single Generation</button>
+                          <button class="btn btn-secondary" type="button" v-if="!simIsRunning" v-on:click="initialiseState()">Reset Board</button>
+                        </div>
+                      </form>
+                    </div>
                   </div>  
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+    
       <div class="row seperator-row">
         <div class="col">
           <div class="card ">
@@ -108,8 +135,8 @@
               </div>
             </div>
           </div>
-          
         </div>
+        
         
         
         
